@@ -65,8 +65,8 @@ func TopDonorsGET(md common.MethodData) common.CodeMessager {
 		}
 	}
 
-	if len(tempUsers)>8 {
-		sortedUsers := make([]userData, 8)
+	if len(tempUsers)>100 {
+		sortedUsers := make([]userData, 100)
 		copy(sortedUsers, tempUsers)
 		resp.Users = sortedUsers
 	} else {
