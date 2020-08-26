@@ -53,7 +53,7 @@ WHERE user = %s
 AND users_logs.game_mode = %s 
 AND users_logs.time > %s
 ORDER BY users_logs.time  
-DESC LIMIT 5
+DESC LIMIT 10
 `, id, mode, strconv.Itoa(int(time.Now().Unix())-2592000)))
 	if err != nil {
 		md.Err(err)
