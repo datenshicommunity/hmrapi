@@ -45,16 +45,16 @@ func LogsGET(md common.MethodData) common.CodeMessager {
 	results, err := md.DB.Query(fmt.Sprintf(`SELECT 
 b.song_name, 
 l.log, l.time, l.scoreid, 
-b.beatmap_id,
-s.play_mode, s.mods, s.accuracy, s.300_count, s.100_count, s.50_count, s.misses_count
-FROM users_logs as l
-LEFT JOIN beatmaps as b USING (beatmap_md5)
-INNER JOIN scores_master as s ON s.id = l.scoreid
+b.beatmap_id, 
+s.play_mode, s.mods, s.accuracy, s.300_count, s.100_count, s.50_count, s.misses_count 
+FROM users_logs as l 
+LEFT JOIN beatmaps as b USING (beatmap_md5) 
+INNER JOIN scores_master as s ON s.id = l.scoreid 
 WHERE user = %s 
 AND l.game_mode = %s 
-AND l.time > %d
-AND s.special_mode = %d
-ORDER BY l.time
+AND l.time > %d 
+AND s.special_mode = %d 
+ORDER BY l.time 
 DESC LIMIT 10
 `, id, mode, int(time.Now().Unix())-2592000, spmode))
 	if err != nil {
