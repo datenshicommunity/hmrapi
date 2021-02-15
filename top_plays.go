@@ -48,25 +48,25 @@ type ScoresResponse struct {
 
 const topPlaysQuery = `
 SELECT
-	scores.id, scores.beatmap_md5, scores.score,
-	scores.max_combo, scores.full_combo, scores.mods,
-	scores.300_count, scores.100_count, scores.50_count,
-	scores.gekis_count, scores.katus_count, scores.misses_count,
-	scores.time, scores.play_mode, scores.accuracy, scores.pp,
-	scores.completed,
+	s.id, s.beatmap_md5, s.score,
+	s.max_combo, s.full_combo, s.mods,
+	s.300_count, s.100_count, s.50_count,
+	s.gekis_count, s.katus_count, s.misses_count,
+	s.time, s.play_mode, s.accuracy, s.pp,
+	s.completed,
 
-	beatmaps.beatmap_id, beatmaps.beatmapset_id, beatmaps.beatmap_md5,
-	beatmaps.song_name, beatmaps.ar, beatmaps.od, beatmaps.difficulty_std,
-	beatmaps.difficulty_taiko, beatmaps.difficulty_ctb, beatmaps.difficulty_mania,
-	beatmaps.max_combo, beatmaps.hit_length, beatmaps.ranked,
-	beatmaps.ranked_status_freezed, beatmaps.latest_update,
+	b.beatmap_id, b.beatmapset_id, b.beatmap_md5,
+	b.song_name, b.ar, b.od, b.difficulty_std,
+	b.difficulty_taiko, b.difficulty_ctb, b.difficulty_mania,
+	b.max_combo, b.hit_length, b.ranked,
+	b.ranked_status_freezed, b.latest_update,
 
-	users.id, users.username
-FROM scores
-INNER JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-INNER JOIN users ON users.id = scores.userid
-WHERE scores.pp > 0 AND scores.completed = '3' AND users.privileges & 1 > 0 AND scores.play_mode = %s
-ORDER BY scores.pp DESC
+	u.id, u.username
+FROM scores_master as s
+INNER JOIN beatmaps as b ON b.beatmap_md5 = s.beatmap_md5
+INNER JOIN users as u ON u.id = s.userid
+WHERE s.pp > 0 AND s.completed = '3' AND u.privileges & 1 > 0 AND s.play_mode = %s AND s.special_mode = %s
+ORDER BY s.pp DESC
 `
 
 func TopPlaysGET(md common.MethodData) common.CodeMessager {
@@ -76,11 +76,12 @@ func TopPlaysGET(md common.MethodData) common.CodeMessager {
 		limitQuery = " LIMIT " + md.Query("l")
 	}
 	mode := md.Query("mode")
+	smode := common.Int(md.Query("spmode"))
 
-	rows, err := md.DB.Query(fmt.Sprintf(topPlaysQuery, mode) + limitQuery)
+	rows, err := md.DB.Query(fmt.Sprintf(topPlaysQuery, mode, smode) + limitQuery)
 	if err != nil {
 		md.Err(err)
-		return common.SimpleResponse(500, "Uh oh... Seems like Aoba did something bad to API... Please try again! If it's broken... Please tell me in the Discord!")
+		return common.SimpleResponse(500, "Uh oh... Seems like Makino did something bad to API... Please try again! If it's broken... Please tell me in the Discord!")
 	}
 	var scores []MixedBeatmap
 	for rows.Next() {
@@ -106,7 +107,7 @@ func TopPlaysGET(md common.MethodData) common.CodeMessager {
 		)
 		if err != nil {
 			md.Err(err)
-			return common.SimpleResponse(500, "Uh oh... Seems like Aoba did something bad to API... Please try again! If it's broken... Please tell me in the Discord!")
+			return common.SimpleResponse(500, "Uh oh... Seems like Makino did something bad to API... Please try again! If it's broken... Please tell me in the Discord!")
 		}
 		b.Difficulty = b.Diff2.STD
 		us.Beatmap = b

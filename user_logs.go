@@ -40,24 +40,26 @@ type Massive struct {
 func LogsGET(md common.MethodData) common.CodeMessager {
 	id := md.Query("userid")
 	mode := md.Query("mode")
+	spmode := common.Int(md.Query("spmode"))
 
 	results, err := md.DB.Query(fmt.Sprintf(`SELECT 
-beatmaps.song_name, 
-users_logs.log, users_logs.time, users_logs.scoreid, 
-beatmaps.beatmap_id,
-scores.play_mode, scores.mods, scores.accuracy, scores.300_count, scores.100_count, scores.50_count, scores.misses_count
-FROM users_logs 
-LEFT JOIN beatmaps ON (beatmaps.beatmap_md5 = users_logs.beatmap_md5)
-INNER JOIN scores ON scores.id = users_logs.scoreid
+b.song_name, 
+l.log, l.time, l.scoreid, 
+b.beatmap_id,
+s.play_mode, s.mods, s.accuracy, s.300_count, s.100_count, s.50_count, s.misses_count
+FROM users_logs as l
+LEFT JOIN beatmaps as b USING (beatmap_md5)
+INNER JOIN scores_master as s ON s.id = l.scoreid
 WHERE user = %s 
-AND users_logs.game_mode = %s 
-AND users_logs.time > %s
-ORDER BY users_logs.time  
+AND l.game_mode = %s 
+AND l.time > %s
+AND s.special_mode = %s
+ORDER BY l.time  
 DESC LIMIT 10
-`, id, mode, strconv.Itoa(int(time.Now().Unix())-2592000)))
+`, id, mode, strconv.Itoa(int(time.Now().Unix())-2592000), spmode))
 	if err != nil {
 		md.Err(err)
-		return common.SimpleResponse(500, "Uh oh... Seems like Aoba did something bad to API... Please try again! If it's broken... Please tell me in the Discord!")
+		return common.SimpleResponse(500, "Uh oh... Seems like Makino did something bad to API... Please try again! If it's broken... Please tell me in the Discord!")
 	}
 
 	var response Massive
