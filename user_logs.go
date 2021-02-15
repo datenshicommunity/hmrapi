@@ -52,11 +52,11 @@ LEFT JOIN beatmaps as b USING (beatmap_md5)
 INNER JOIN scores_master as s ON s.id = l.scoreid
 WHERE user = %s 
 AND l.game_mode = %s 
-AND l.time > %s
+AND l.time > %d
 AND s.special_mode = %d
-ORDER BY l.time  
+ORDER BY l.time
 DESC LIMIT 10
-`, id, mode, strconv.Itoa(int(time.Now().Unix())-2592000), spmode))
+`, id, mode, int(time.Now().Unix())-2592000, spmode))
 	if err != nil {
 		md.Err(err)
 		return common.SimpleResponse(500, "Uh oh... Seems like Makino did something bad to API... Please try again! If it's broken... Please tell me in the Discord!")
