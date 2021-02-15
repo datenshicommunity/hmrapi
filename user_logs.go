@@ -53,7 +53,7 @@ INNER JOIN scores_master as s ON s.id = l.scoreid
 WHERE user = %s 
 AND l.game_mode = %s 
 AND l.time > %s
-AND s.special_mode = %s
+AND s.special_mode = %d
 ORDER BY l.time  
 DESC LIMIT 10
 `, id, mode, strconv.Itoa(int(time.Now().Unix())-2592000), spmode))

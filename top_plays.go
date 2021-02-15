@@ -65,7 +65,7 @@ SELECT
 FROM scores_master as s
 INNER JOIN beatmaps as b ON b.beatmap_md5 = s.beatmap_md5
 INNER JOIN users as u ON u.id = s.userid
-WHERE s.pp > 0 AND s.completed = '3' AND u.privileges & 1 > 0 AND s.play_mode = %s AND s.special_mode = %s
+WHERE s.pp > 0 AND s.completed = '3' AND u.privileges & 1 > 0 AND s.play_mode = %s AND s.special_mode = %d
 ORDER BY s.pp DESC
 `
 
