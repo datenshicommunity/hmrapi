@@ -6,7 +6,7 @@ import (
 
 	"gopkg.in/thehowl/go-osuapi.v1"
 	"github.com/osu-datenshi/api/common"
-	"github.com/osu-datenshi/getrank"
+	"github.com/osu-datenshi/lib/getrank"
 )
 
 type miniUser struct {
