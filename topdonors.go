@@ -21,10 +21,10 @@ type topDonorsResponse struct {
 
 const lbUserQuery = `
 SELECT
-	users.id, users.username, users_stats.username_aka, users.register_datetime, users.privileges, users.latest_activity,
-	users_stats.country, users.donor_expire
+	users.id, users.username, master_stats.username_aka, users.register_datetime, users.privileges, users.latest_activity,
+	master_stats.country, users.donor_expire
 FROM users
-INNER JOIN users_stats ON users_stats.id = users.id
+INNER JOIN master_stats ON master_stats.id = users.id
 WHERE users.privileges >= 4 AND users.privileges != 1048576
 ORDER BY users.donor_expire DESC
 `
@@ -40,6 +40,7 @@ func TopDonorsGET(md common.MethodData) common.CodeMessager {
 		md.Err(err)
 		return common.SimpleResponse(500, "Uh oh... Seems like Aoba did something bad to API... Please try again! If it's broken... Please tell me in the Discord!")
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var u userData
 		var privileges uint64
