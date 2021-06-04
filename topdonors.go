@@ -21,10 +21,10 @@ type topDonorsResponse struct {
 
 const lbUserQuery = `
 SELECT
-	users.id, users.username, master_stats.username_aka, users.register_datetime, users.privileges, users.latest_activity,
-	master_stats.country, users.donor_expire
+	users.id, users.username, user_config.username_aka, users.register_datetime, users.privileges, users.latest_activity,
+	user_config.country, users.donor_expire
 FROM users
-INNER JOIN master_stats ON master_stats.id = users.id
+INNER JOIN user_config ON user_config.id = users.id
 WHERE users.privileges >= 4 AND users.privileges != 1048576
 ORDER BY users.donor_expire DESC
 `
